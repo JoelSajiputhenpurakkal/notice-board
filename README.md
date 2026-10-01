@@ -1,20 +1,26 @@
 # NoticeBoard
 
-NoticeBoard is a responsive community notice board focused on clear updates and accountable actions — not chat.
+A working community notice board built with Next.js, Prisma, and SQLite.
 
 ## Run locally
 
-```bash
-npm install
-npm run dev
-```
+Requires Node.js 18.18 or newer.
 
-Then open http://localhost:3000.
+1. Copy `.env.example` to `.env` and set a private `AUTH_SECRET` of at least 32 characters.
+2. Install packages and create the local database:
+   ```bash
+   npm install
+   npm run db:migrate -- --name init
+   npm run dev
+   ```
+3. Open http://localhost:3000 and create an account.
 
-## Current MVP
+## What works
 
-The current experience is a polished front-end prototype with seeded community and notice data. It demonstrates community switching, search and filters, notice creation, acknowledgement state, invite-link UI, responsive navigation, empty states, and toast feedback. Data is held in component state for the prototype.
+- Account registration and sign-in with scrypt password hashes and HTTP-only signed session cookies.
+- Community creation; the creator becomes its admin.
+- Seven-day invite links for joining communities.
+- Persistent notices, search, and per-member acknowledgements.
+- Server-side membership checks on community and notice routes.
 
-## Next production steps
-
-Connect the existing flows to a PostgreSQL/Prisma data layer, Auth.js sessions, object storage for attachments, and server-side authorization checks. The UI is intentionally structured around those future boundaries.
+Data is stored in `prisma/dev.db` for local development. Back up this file to keep the local database. Before deploying to a serverless host or running multiple app instances, switch the Prisma datasource to PostgreSQL and configure a managed database. Set a strong, unique `AUTH_SECRET` in every environment. This MVP does not yet include email verification, password reset, attachment storage, or automated account recovery.
