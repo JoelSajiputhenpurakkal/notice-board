@@ -1,0 +1,25 @@
+databases:
+  - name: noticeboard-db
+    databaseName: noticeboard
+    user: noticeboard
+    plan: free
+    region: singapore
+    ipAllowList: []
+
+services:
+  - type: web
+    name: noticeboard
+    runtime: node
+    plan: free
+    region: singapore
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run db:deploy && npm run start
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: noticeboard-db
+          property: connectionString
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: NODE_VERSION
+        value: "22"
