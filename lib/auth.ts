@@ -33,8 +33,11 @@ export async function currentUser() {
   const token = cookies().get(COOKIE)?.value;
   if (!token) return null;
   const [payload, signature] = token.split(".");
-  if (!payload || !signature || !timingSafeEqual(Buffer.from(signature), Buffer.from(sign(payload)))) return null;
+  if (!payload || !signature) return null;
   try {
+    const actual = Buffer.from(signature);
+    const expected = Buffer.from(sign(payload));
+    if (actual.length !== expected.length || !timingSafeEqual(actual, expected)) return null;
     const data = JSON.parse(Buffer.from(payload, "base64url").toString());
     if (typeof data.sub !== "string" || data.exp < Date.now()) return null;
     return await prisma.user.findUnique({ where: { id: data.sub }, select: { id: true, name: true, email: true } });
