@@ -13,6 +13,6 @@ export async function POST(request: Request) {
   if (!user) return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
   const { name, description = "" } = await request.json();
   if (typeof name !== "string" || name.trim().length < 2 || name.length > 80 || typeof description !== "string" || description.length > 300) return NextResponse.json({ error: "Check the community name and description." }, { status: 400 });
-  const community = await prisma.community.create({ data: { name: name.trim(), description: description.trim(), memberships: { create: { userId: user.id, role: "ADMIN" } } } });
+  const community = await prisma.community.create({ data: { name: name.trim(), description: description.trim(), memberships: { create: { user: { connect: { id: user.id } }, role: "ADMIN" } } } });
   return NextResponse.json({ community: { ...community, role: "ADMIN", members: 1 } }, { status: 201 });
 }
