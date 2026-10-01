@@ -72,19 +72,21 @@ export default function Home() {
 
   async function createCommunity(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError("");
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     try {
       const data = await api("/api/communities", { method: "POST", body: JSON.stringify({ name: form.get("name"), description: form.get("description") }) });
-      await loadCommunities(); setActiveId(data.community.id); event.currentTarget.reset(); setToast("Community created.");
+      await loadCommunities(); setActiveId(data.community.id); formElement.reset(); setToast("Community created.");
     } catch (e) { setError((e as Error).message); }
   }
 
   async function createNotice(event: FormEvent<HTMLFormElement>) {
     event.preventDefault(); setError("");
-    const form = new FormData(event.currentTarget);
+    const formElement = event.currentTarget;
+    const form = new FormData(formElement);
     try {
       await api("/api/notices", { method: "POST", body: JSON.stringify({ communityId: activeId, title: form.get("title"), subtitle: form.get("subtitle"), body: form.get("body"), action: form.get("action") }) });
-      event.currentTarget.reset(); await loadNotices(activeId); setToast("Notice published.");
+      formElement.reset(); await loadNotices(activeId); setToast("Notice published.");
     } catch (e) { setError((e as Error).message); }
   }
 
