@@ -1,0 +1,78 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(cuid())
+  name         String
+  email        String         @unique
+  passwordHash String
+  createdAt    DateTime       @default(now())
+  memberships  Membership[]
+  notices      Notice[]
+  acknowledgements Acknowledgement[]
+  createdInvites Invite[]     @relation("InviteCreator")
+}
+
+model Community {
+  id          String       @id @default(cuid())
+  name        String
+  description String       @default("")
+  createdAt   DateTime     @default(now())
+  memberships Membership[]
+  notices     Notice[]
+  invites     Invite[]
+}
+
+model Membership {
+  id          String    @id @default(cuid())
+  userId      String
+  communityId String
+  role        String    @default("MEMBER")
+  createdAt   DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, communityId])
+}
+
+model Notice {
+  id          String           @id @default(cuid())
+  communityId String
+  authorId    String
+  title       String
+  subtitle    String           @default("")
+  body        String
+  action      String           @default("Mark as read")
+  createdAt   DateTime         @default(now())
+  community   Community        @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  author      User             @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  acknowledgements Acknowledgement[]
+  @@index([communityId, createdAt])
+}
+
+model Acknowledgement {
+  id        String   @id @default(cuid())
+  noticeId  String
+  userId    String
+  createdAt DateTime @default(now())
+  notice    Notice   @relation(fields: [noticeId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@unique([noticeId, userId])
+}
+
+model Invite {
+  id          String    @id @default(cuid())
+  token       String    @unique
+  communityId String
+  creatorId   String
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+  community   Community @relation(fields: [communityId], references: [id], onDelete: Cascade)
+  creator     User      @relation("InviteCreator", fields: [creatorId], references: [id], onDelete: Cascade)
+}
