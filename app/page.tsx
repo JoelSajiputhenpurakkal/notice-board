@@ -23,6 +23,7 @@ export default function Home() {
   const [error, setError] = useState("");
   const [toast, setToast] = useState("");
   const [invite, setInvite] = useState("");
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const active = communities.find((c) => c.id === activeId) || communities[0];
 
   const loadCommunities = useCallback(async () => {
@@ -123,15 +124,16 @@ export default function Home() {
 
   const filteredNotices = notices.filter((n) => (n.title + " " + n.subtitle + " " + n.body).toLowerCase().includes(query.toLowerCase()));
   return <main className="app-shell">
-    <aside className="sidebar">
+    <aside className={"sidebar " + (sidebarOpen ? "open" : "")}>
       <div className="brand"><div className="brand-mark">N</div><span>Notice<span className="brand-accent">Board</span></span></div>
       <p className="side-label">Your communities</p>
-      <nav className="side-communities">{communities.map((c) => <button key={c.id} className={"side-community " + (c.id === activeId ? "selected" : "")} onClick={() => setActiveId(c.id)}>{c.name}</button>)}</nav>
+      <nav className="side-communities">{communities.map((c) => <button key={c.id} className={"side-community " + (c.id === activeId ? "selected" : "")} onClick={() => { setActiveId(c.id); setSidebarOpen(false); }}>{c.name}</button>)}</nav>
       <form className="community-form" onSubmit={createCommunity}><h3>Start a community</h3><label>Name<input name="name" required minLength={2} maxLength={80} placeholder="e.g. Apartment association" /></label><label>Description<input name="description" maxLength={300} placeholder="What is it for?" /></label><button className="secondary-button">Create community</button></form>
       <div className="sidebar-bottom"><div className="profile-mini"><div className="avatar user">{user.name.split(" ").map((part) => part[0]).join("").slice(0, 2)}</div><div><strong>{user.name}</strong><small>{user.email}</small></div></div><button className="nav-item" onClick={logout}>Sign out</button></div>
     </aside>
+    {sidebarOpen && <button className="sidebar-backdrop" aria-label="Close navigation" onClick={() => setSidebarOpen(false)} />}
     <section className="content-area">
-      <header className="topbar"><div className="breadcrumb"><span className="muted">Communities</span><span className="chevron">›</span><strong>{active?.name || "Overview"}</strong></div><span className="top-name">{user.name}</span></header>
+      <header className={"topbar " + (sidebarOpen ? "menu-open" : "")}><button className="mobile-menu" aria-label="Toggle navigation" onClick={() => setSidebarOpen(!sidebarOpen)}>☰</button><div className="breadcrumb"><span className="muted">Communities</span><span className="chevron">›</span><strong>{active?.name || "Overview"}</strong></div><span className="top-name">{user.name}</span></header>
       <div className="page-content">
         {error && <p className="error-note">{error}<button onClick={() => setError("")}>Dismiss</button></p>}
         {active ? <>
