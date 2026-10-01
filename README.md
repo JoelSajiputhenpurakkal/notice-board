@@ -1,16 +1,16 @@
 # NoticeBoard
 
-A working community notice board built with Next.js, Prisma, and SQLite.
+A working community notice board built with Next.js, Prisma, and PostgreSQL.
 
 ## Run locally
 
-Requires Node.js 18.18 or newer.
+Requires Node.js 18.18 or newer and a PostgreSQL database.
 
-1. Copy `.env.example` to `.env` and set a private `AUTH_SECRET` of at least 32 characters.
-2. Install packages and create the local database:
+1. Copy `.env.example` to `.env`; set your PostgreSQL `DATABASE_URL` and a private `AUTH_SECRET` of at least 32 characters.
+2. Install packages and apply the database migration:
    ```bash
    npm install
-   npm run db:migrate -- --name init
+   npm run db:deploy
    npm run dev
    ```
 3. Open http://localhost:3000 and create an account.
@@ -23,4 +23,8 @@ Requires Node.js 18.18 or newer.
 - Persistent notices, search, and per-member acknowledgements.
 - Server-side membership checks on community and notice routes.
 
-Data is stored in `prisma/dev.db` for local development. Back up this file to keep the local database. Before deploying to a serverless host or running multiple app instances, switch the Prisma datasource to PostgreSQL and configure a managed database. Set a strong, unique `AUTH_SECRET` in every environment. This MVP does not yet include email verification, password reset, attachment storage, or automated account recovery.
+The Prisma schema and initial migration are configured for PostgreSQL. Set a strong, unique `AUTH_SECRET` in every environment. This MVP does not yet include email verification, password reset, attachment storage, or automated account recovery.
+
+## Hosting
+
+The included `render.yaml` describes a Render web service and PostgreSQL database. Render's free PostgreSQL plan is for temporary previews: it expires after 30 days and has no backups. Use a paid database plan for persistent production data.
