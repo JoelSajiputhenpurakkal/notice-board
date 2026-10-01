@@ -37,3 +37,5 @@
 .welcome-empty{margin-top:15vh}
 .welcome-empty p{color:#8d98a8;font-size:13px}
 @media(max-width:680px){.auth-card{padding:25px 21px}.community-form{padding-left:0;padding-right:0}}
+
+@media(max-width:680px){.sidebar-backdrop{display:block;position:fixed;inset:0;z-index:3;border:0;background:#1e2b3b66}.topbar.menu-open{position:relative;z-index:5}}
