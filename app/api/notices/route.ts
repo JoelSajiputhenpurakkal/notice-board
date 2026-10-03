@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   const communityId = new URL(request.url).searchParams.get("communityId");
   if (!communityId || !await membership(user.id, communityId)) return NextResponse.json({ error: "Community not found." }, { status: 404 });
   const notices = await prisma.notice.findMany({ where: { communityId }, include: { author: { select: { name: true } }, acknowledgements: { select: { userId: true } } }, orderBy: { createdAt: "desc" } });
-  return NextResponse.json({ notices: notices.map((notice) => ({ ...notice, author: notice.author.name, acknowledgements: notice.acknowledgements.length, completed: notice.acknowledgements.some((a) => a.userId === user.id) })) });
+  return NextResponse.json({ notices: notices.map((notice: any) => ({ ...notice, author: notice.author.name, acknowledgements: notice.acknowledgements.length, completed: notice.acknowledgements.some((a: any) => a.userId === user.id) })) });
 }
 export async function POST(request: Request) {
   const user = await currentUser();

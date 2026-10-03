@@ -6,7 +6,7 @@ export async function GET() {
   const user = await currentUser();
   if (!user) return NextResponse.json({ error: "Sign in to continue." }, { status: 401 });
   const rows = await prisma.membership.findMany({ where: { userId: user.id }, include: { community: true }, orderBy: { createdAt: "asc" } });
-  return NextResponse.json({ communities: rows.map((row) => ({ ...row.community, role: row.role, members: 0 })) });
+  return NextResponse.json({ communities: rows.map((row: any) => ({ ...row.community, role: row.role, members: 0 })) });
 }
 export async function POST(request: Request) {
   const user = await currentUser();
