@@ -1,6 +1,10 @@
 node_modules
+.pnpm-store
 .next
 out
+*.tsbuildinfo
 .env*
 !.env.example
 npm-debug.log*
+prisma/*.db
+prisma/*.db-*
