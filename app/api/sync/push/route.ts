@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { Prisma } from "@prisma/client";
 import { currentUser } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
         throw new Error("The queued operation is incomplete.");
       }
       const payload = JSON.parse(operation.payload);
-      const status = await prisma.$transaction(async (tx) => {
+      const status = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
         if (operation.operationType === "CREATE_GROUP") {
           const groupId = String(payload.id || operation.entityId);
           const existing = await tx.community.findUnique({ where: { id: groupId } });
